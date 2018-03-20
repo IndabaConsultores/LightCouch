@@ -1,5 +1,6 @@
 /*
  * Copyright (C) lightcouch.org
+ * Copyright (C) 2018 indaba.es
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -179,7 +180,7 @@ public class CouchDbContext {
 	/**
 	 * Request all database update events in the CouchDB instance.
 	 * @param since
-	 * @returna list of all database events in the CouchDB instance
+	 * @return a list of all database events in the CouchDB instance
 	 */
 	public DbUpdates dbUpdates(String since) {
 		InputStream instream = null;
