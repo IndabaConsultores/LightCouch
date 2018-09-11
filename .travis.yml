@@ -3,7 +3,10 @@ sudo: required
 language: java
 addons:
   sonarcloud:
-    organization: "indaba"   
+    organization: "indaba"
+  apt:
+    packages:
+      - docker-ce
     
 services:
   - docker
