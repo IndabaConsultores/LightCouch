@@ -57,7 +57,7 @@ public class DesignDocumentsTest extends CouchDbTestBase {
 	@Test
     public void containsDesignDoc() {
 	    
-	    assertFalse(dbClient.design().contains("_design/test-design-doc"));
+	    assertFalse(dbClient.design().contains("_design/test-design-doc-unknown"));
 	    
 	    DesignDocument designDoc1 = dbClient.design().getFromDesk("test-design-doc");
         dbClient.design().synchronizeWithDb(designDoc1);
