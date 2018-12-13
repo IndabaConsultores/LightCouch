@@ -33,7 +33,7 @@ public class CouchDbInfo {
 	@SerializedName("update_seq")
 	private String updateSeq;
 	@SerializedName("purge_seq")
-	private long purgeSeq;
+	private String purgeSeq;
 	@SerializedName("compact_running")
 	private boolean compactRunning;
 	@SerializedName("disk_size")
@@ -59,7 +59,7 @@ public class CouchDbInfo {
 		return updateSeq;
 	}
 
-	public long getPurgeSeq() {
+	public String getPurgeSeq() {
 		return purgeSeq;
 	}
 
