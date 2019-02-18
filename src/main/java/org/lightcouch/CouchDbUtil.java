@@ -26,9 +26,11 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
@@ -51,12 +53,17 @@ final class CouchDbUtil {
 		// Utility class
 	}
 	
-	public static void assertNotEmpty(Object object, String prefix) throws IllegalArgumentException {
+	@SuppressWarnings("rawtypes")
+    public static void assertNotEmpty(Object object, String prefix) throws IllegalArgumentException {
 		if(object == null) {
 			throw new IllegalArgumentException(format("%s may not be null.", prefix));
 		} else if(object instanceof String && ((String)object).length() == 0) {
 			throw new IllegalArgumentException(format("%s may not be empty.", prefix));
-		} 
+		} else if(object instanceof Collection && ((Collection)object).size() == 0) {
+            throw new IllegalArgumentException(format("%s may not be empty.", prefix));
+        } else if(object instanceof Map && ((Map)object).size() == 0) {
+            throw new IllegalArgumentException(format("%s may not be empty.", prefix));
+        }
 	}
 	
 	public static void assertNull(Object object, String prefix) throws IllegalArgumentException {
