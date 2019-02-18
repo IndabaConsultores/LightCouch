@@ -19,6 +19,7 @@ public class PurgeTest extends CouchDbTestBase {
     public void pre23NotsupportedTest() {
         Assume.assumeTrue(isCouchDB2() && !isCouchDB23());
         Map<String, List<String>> toPurge = new HashMap<String, List<String>>();
+        toPurge.put("222", Arrays.asList("1-967a00dff5e02add41819138abb3284d"));
         try {
             dbClient.purge(toPurge);
             Assert.fail("Exception is expected");
