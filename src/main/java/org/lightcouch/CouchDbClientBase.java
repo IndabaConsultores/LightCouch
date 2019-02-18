@@ -197,7 +197,6 @@ public abstract class CouchDbClientBase {
             String jsonToPurge = getGson().toJson(toPurge);
             response = post(buildUri(getDBUri()).path("_purge").build(), jsonToPurge);
             reader = new InputStreamReader(getStream(response), Charsets.UTF_8);
-            // Type type = new TypeToken<Map<String, List<String>>>() {}.getType();
             return getGson().fromJson(reader, PurgeResponse.class);
         } finally {
             close(reader);
