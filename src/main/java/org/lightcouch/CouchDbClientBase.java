@@ -518,6 +518,22 @@ public abstract class CouchDbClientBase {
     }
 
     /**
+     * removes an attachment from an existing document given a document id and revision and the attachment name
+     *
+     * @param name The attachment name.
+     * @param docId The document id to remove the attachment from
+     * @param docRev The document revision to remove the attachment from
+     * @return {@link Response}
+     */
+    public Response removeAttachment(String name, String docId, String docRev) {
+        assertNotEmpty(name, "name");
+        assertNotEmpty(docId, "docId");
+        assertNotEmpty(docRev, "docRev");
+        final URI uri = buildUri(getDBUri()).pathEncoded(docId).path("/").path(name).query("rev", docRev).build();
+        return delete(uri);
+    }
+
+    /**
      * Invokes an Update Handler.
      *
      * <pre>
