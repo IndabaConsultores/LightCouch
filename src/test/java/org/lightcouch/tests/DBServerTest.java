@@ -28,38 +28,45 @@ import org.lightcouch.CouchDbInfo;
 
 public class DBServerTest extends CouchDbTestBase {
 
+  @Test
+  public void dbInfo() {
+    CouchDbInfo dbInfo = dbClient.context().info();
+    assertNotNull(dbInfo);
+    if (isCouchDB2()) {
+      assertNotNull(dbInfo.getSizes());
+      assertNotNull(dbInfo.getCluster());
+    }
+    if (isCouchDB3()) {
+      assertNotNull(dbInfo.getProps());
+    }
+    System.out.println(dbInfo);
+  }
 
-	@Test
-	public void dbInfo() {
-		CouchDbInfo dbInfo = dbClient.context().info();
-		assertNotNull(dbInfo);
-	}
+  @Test
+  public void serverVersion() {
+    String version = dbClient.context().serverVersion();
+    assertNotNull(version);
+  }
 
-	@Test
-	public void serverVersion() {
-		String version = dbClient.context().serverVersion();
-		assertNotNull(version);
-	}
+  @Test
+  public void compactDb() {
+    dbClient.context().compact();
+  }
 
-	@Test
-	public void compactDb() {
-		dbClient.context().compact();
-	}
+  @Test
+  public void allDBs() {
+    List<String> allDbs = dbClient.context().getAllDbs();
+    assertThat(allDbs.size(), is(not(0)));
+  }
 
-	@Test
-	public void allDBs() {
-		List<String> allDbs = dbClient.context().getAllDbs();
-		assertThat(allDbs.size(), is(not(0)));
-	}
+  @Test
+  public void ensureFullCommit() {
+    dbClient.context().ensureFullCommit();
+  }
 
-	@Test
-	public void ensureFullCommit() {
-		dbClient.context().ensureFullCommit();
-	}
-
-	@Test
-	public void uuids() {
-		List<String> uuids = dbClient.context().uuids(10);
-		assertThat(uuids.size(), is(10));
-	}
+  @Test
+  public void uuids() {
+    List<String> uuids = dbClient.context().uuids(10);
+    assertThat(uuids.size(), is(10));
+  }
 }

@@ -31,6 +31,10 @@ public class CouchDbTestBase {
         return isCouchDBVersion(">=2.0.0");
     }
     
+    protected boolean isCouchDB3() {
+      return isCouchDBVersion(">=3.0.0");
+  }
+    
     protected boolean isCouchDB1() {
         return isCouchDBVersion(">=0.0.0 & <2.0.0"); 
     }
