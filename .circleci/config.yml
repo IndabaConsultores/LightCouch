@@ -1,6 +1,37 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine.
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
+commands:
+  set-couchdb-credentials:
+    parameters:
+      username:
+        default: "couchdb"
+        type: string
+      password:
+        default: "couchdb"
+        type: string
+    steps:
+      - run:
+         name: Config CouchDB credentials for testing
+         command: |
+            sed 's/^couchdb.username.*/couchdb.username=<<parameters.username>>/;s/^couchdb.password.*/couchdb.password=<<parameters.password>>/' -i src/test/resources/couchdb.properties
+            sed 's/^couchdb.username.*/couchdb.username=<<parameters.username>>/;s/^couchdb.password.*/couchdb.password=<<parameters.password>>/' -i src/test/resources/couchdb-2.properties
+  create-system-dbs:
+    parameters:
+      username:
+        default: "couchdb"
+        type: string
+      password:
+        default: "couchdb"
+        type: string
+    steps:
+      - run:
+         name: Prepare CouchDB
+         command: |
+            curl -X PUT http://127.0.0.1:5984/_users -u <<parameters.username>>:<<parameters.password>>
+            curl -X PUT http://127.0.0.1:5984/_replicator -u <<parameters.username>>:<<parameters.password>>
+            curl -X PUT http://127.0.0.1:5984/_global_changes -u <<parameters.username>>:<<parameters.password>>
+
 jobs:
   test-couchdb-320:
     # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
@@ -15,14 +46,8 @@ jobs:
       - run:
           name: Build
           command: mvn -B -DskipTests clean package
-      - run:
-          name: Prepare CouchDB
-          command: |
-            sed 's/^couchdb.username.*/couchdb.username=couchdb/;s/^couchdb.password.*/couchdb.password=couchdb/' -i src/test/resources/couchdb.properties
-            sed 's/^couchdb.username.*/couchdb.username=couchdb/;s/^couchdb.password.*/couchdb.password=couchdb/' -i src/test/resources/couchdb-2.properties
-            curl -X PUT http://127.0.0.1:5984/_users -u couchdb:couchdb
-            curl -X PUT http://127.0.0.1:5984/_replicator -u couchdb:couchdb
-            curl -X PUT http://127.0.0.1:5984/_global_changes -u couchdb:couchdb
+      - set-couchdb-credentials
+      - create-system-dbs
       - run:
           name: Test-and-Sonar
           command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar -Dsonar.projectKey=es.indaba:lightcouch -Dsonar.organization=indaba -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
