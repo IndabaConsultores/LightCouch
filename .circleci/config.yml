@@ -31,8 +31,51 @@ commands:
             curl -X PUT http://127.0.0.1:5984/_users -u <<parameters.username>>:<<parameters.password>>
             curl -X PUT http://127.0.0.1:5984/_replicator -u <<parameters.username>>:<<parameters.password>>
             curl -X PUT http://127.0.0.1:5984/_global_changes -u <<parameters.username>>:<<parameters.password>>
-
+  maven-build:
+    steps:
+     - run:
+          name: Build
+          command: mvn -B -DskipTests clean package
+  maven-test:
+    steps:
+     - run:
+          name: Build
+          command: mvn test
+executors:
+  couchdb:
+    parameters:
+      version:
+        description: "couchdb version tag"
+        default: "3.2.0"
+        type: string
+    docker:
+      - image: cimg/openjdk:11.0
+      - image: couchdb:<<parameters.version>>
+        environment:
+          COUCHDB_USER: couchdb
+          COUCHDB_PASSWORD: couchdb
 jobs:
+  test-couchdb:
+    parameters:
+      version:
+        description: "version tag"
+        default: "3.2.0"
+        type: string
+    executor:
+      name: couchdb
+      version: <<parameters.version>>    
+    steps:
+      - checkout
+      - maven-build
+      - set-couchdb-credentials
+      - when:
+          condition: 
+            not:
+              equal: ["1.7.2",<<parameters.version>>]
+          steps:
+            - create-system-dbs
+      - maven-test
+
   test-couchdb-320:
     # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
     docker:
@@ -43,9 +86,7 @@ jobs:
           COUCHDB_PASSWORD: couchdb
     steps:
       - checkout
-      - run:
-          name: Build
-          command: mvn -B -DskipTests clean package
+      - maven-build
       - set-couchdb-credentials
       - create-system-dbs
       - run:
@@ -59,23 +100,13 @@ jobs:
         environment:
           COUCHDB_USER: couchdb
           COUCHDB_PASSWORD: couchdb
-    
     steps:
       - checkout
-      - run:
-          name: Build
-          command: mvn -B -DskipTests clean package
-      - run:
-          name: Prepare CouchDB
-          command: |
-            sed 's/^couchdb.username.*/couchdb.username=couchdb/;s/^couchdb.password.*/couchdb.password=couchdb/' -i src/test/resources/couchdb.properties
-            sed 's/^couchdb.username.*/couchdb.username=couchdb/;s/^couchdb.password.*/couchdb.password=couchdb/' -i src/test/resources/couchdb-2.properties
-            curl -X PUT http://127.0.0.1:5984/_users -u couchdb:couchdb
-            curl -X PUT http://127.0.0.1:5984/_replicator -u couchdb:couchdb
-            curl -X PUT http://127.0.0.1:5984/_global_changes -u couchdb:couchdb
-      - run:
-          name: Test
-          command: mvn test
+      - maven-build
+      - set-couchdb-credentials
+      - create-system-dbs
+      - maven-test
+
   test-couchdb-231:
     docker:
       - image: cimg/openjdk:11.0
@@ -83,23 +114,13 @@ jobs:
         environment:
           COUCHDB_USER: couchdb
           COUCHDB_PASSWORD: couchdb
-
     steps:
       - checkout
-      - run:
-          name: Build
-          command: mvn -B -DskipTests clean package
-      - run:
-          name: Prepare CouchDB
-          command: |
-            sed 's/^couchdb.username.*/couchdb.username=couchdb/;s/^couchdb.password.*/couchdb.password=couchdb/' -i src/test/resources/couchdb.properties
-            sed 's/^couchdb.username.*/couchdb.username=couchdb/;s/^couchdb.password.*/couchdb.password=couchdb/' -i src/test/resources/couchdb-2.properties
-            curl -X PUT http://127.0.0.1:5984/_users -u couchdb:couchdb
-            curl -X PUT http://127.0.0.1:5984/_replicator -u couchdb:couchdb
-            curl -X PUT http://127.0.0.1:5984/_global_changes -u couchdb:couchdb
-      - run:
-          name: Test
-          command: mvn test
+      - maven-build
+      - set-couchdb-credentials
+      - create-system-dbs
+      - maven-test
+
   test-couchdb-220:
     docker:
       - image: cimg/openjdk:11.0
@@ -107,49 +128,39 @@ jobs:
         environment:
           COUCHDB_USER: couchdb
           COUCHDB_PASSWORD: couchdb
-          
     steps:
-      - checkout      
-      - run:
-          name: Build
-          command: mvn -B -DskipTests clean package
-      - run:
-          name: Prepare CouchDB
-          command: |
-            sed 's/^couchdb.username.*/couchdb.username=couchdb/;s/^couchdb.password.*/couchdb.password=couchdb/' -i src/test/resources/couchdb.properties
-            sed 's/^couchdb.username.*/couchdb.username=couchdb/;s/^couchdb.password.*/couchdb.password=couchdb/' -i src/test/resources/couchdb-2.properties
-            curl -X PUT http://127.0.0.1:5984/_users -u couchdb:couchdb
-            curl -X PUT http://127.0.0.1:5984/_replicator -u couchdb:couchdb
-            curl -X PUT http://127.0.0.1:5984/_global_changes -u couchdb:couchdb
-      - run:
-          name: Test
-          command: mvn test
+      - checkout
+      - maven-build
+      - set-couchdb-credentials
+      - create-system-dbs
+      - maven-test
+
   test-couchdb-172:
     docker:
       - image: cimg/openjdk:11.0
       - image: couchdb:1.7.2
         environment:
           COUCHDB_USER: couchdb
-          COUCHDB_PASSWORD: couchdb
-          
+          COUCHDB_PASSWORD: couchdb  
     steps:
       - checkout
-      - run:
-          name: Build
-          command: mvn -B -DskipTests clean package
-      - run:
-          name: Set CouchDB credentials for testing
-          command: |
-            sed 's/^couchdb.username.*/couchdb.username=couchdb/;s/^couchdb.password.*/couchdb.password=couchdb/' -i src/test/resources/couchdb.properties
-            sed 's/^couchdb.username.*/couchdb.username=couchdb/;s/^couchdb.password.*/couchdb.password=couchdb/' -i src/test/resources/couchdb-2.properties
-      - run:
-          name: Test
-          command: mvn test
+      - maven-build
+      - set-couchdb-credentials
+      - maven-test
+
 workflows:
   build-and-test: 
     jobs:
       - test-couchdb-320
-      - test-couchdb-312
-      - test-couchdb-231
-      - test-couchdb-220
-      - test-couchdb-172
+      - test-couchdb:
+         matrix:
+            parameters:
+              version:
+                - 3.1.2
+                - 2.3.1
+                - 2.2.0
+                - 1.7.2
+      #- test-couchdb-312
+      #- test-couchdb-231
+      #- test-couchdb-220
+      #- test-couchdb-172
