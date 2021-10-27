@@ -47,7 +47,7 @@ jobs:
       # Then run your tests!
       - run:
           name: Test
-          command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar
+          command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar -Dsonar.projectKey=es.indaba:lightcouch -Dsonar.organization=indaba -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
