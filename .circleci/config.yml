@@ -39,7 +39,7 @@ commands:
   maven-test:
     steps:
      - run:
-          name: Build
+          name: Test
           command: mvn test
 executors:
   couchdb:
@@ -74,7 +74,18 @@ jobs:
               equal: ["1.7.2",<<parameters.version>>]
           steps:
             - create-system-dbs
-      - maven-test
+      - when:
+          condition: 
+            equal: ["3.2.0",<<parameters.version>>]
+          steps:
+            - run:
+               name: Test-and-Sonar
+               command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar -Dsonar.projectKey=es.indaba:lightcouch -Dsonar.organization=indaba -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
+      - unless:
+          condition: 
+              equal: ["3.2.0",<<parameters.version>>]
+          steps:
+           - maven-test
 
   test-couchdb-320:
     # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
@@ -93,74 +104,16 @@ jobs:
           name: Test-and-Sonar
           command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar -Dsonar.projectKey=es.indaba:lightcouch -Dsonar.organization=indaba -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
 
-  test-couchdb-312:
-    docker:
-      - image: cimg/openjdk:11.0
-      - image: couchdb:3.1.2
-        environment:
-          COUCHDB_USER: couchdb
-          COUCHDB_PASSWORD: couchdb
-    steps:
-      - checkout
-      - maven-build
-      - set-couchdb-credentials
-      - create-system-dbs
-      - maven-test
-
-  test-couchdb-231:
-    docker:
-      - image: cimg/openjdk:11.0
-      - image: couchdb:2.3.1
-        environment:
-          COUCHDB_USER: couchdb
-          COUCHDB_PASSWORD: couchdb
-    steps:
-      - checkout
-      - maven-build
-      - set-couchdb-credentials
-      - create-system-dbs
-      - maven-test
-
-  test-couchdb-220:
-    docker:
-      - image: cimg/openjdk:11.0
-      - image: couchdb:2.2.0
-        environment:
-          COUCHDB_USER: couchdb
-          COUCHDB_PASSWORD: couchdb
-    steps:
-      - checkout
-      - maven-build
-      - set-couchdb-credentials
-      - create-system-dbs
-      - maven-test
-
-  test-couchdb-172:
-    docker:
-      - image: cimg/openjdk:11.0
-      - image: couchdb:1.7.2
-        environment:
-          COUCHDB_USER: couchdb
-          COUCHDB_PASSWORD: couchdb  
-    steps:
-      - checkout
-      - maven-build
-      - set-couchdb-credentials
-      - maven-test
-
 workflows:
   build-and-test: 
     jobs:
-      - test-couchdb-320
+      #- test-couchdb-320
       - test-couchdb:
          matrix:
             parameters:
               version:
+                - 3.2.0
                 - 3.1.2
                 - 2.3.1
                 - 2.2.0
                 - 1.7.2
-      #- test-couchdb-312
-      #- test-couchdb-231
-      #- test-couchdb-220
-      #- test-couchdb-172
