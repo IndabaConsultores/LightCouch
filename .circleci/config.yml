@@ -34,9 +34,9 @@ jobs:
             sed 's/^couchdb.username.*/couchdb.username=couchdb/;s/^couchdb.password.*/couchdb.password=couchdb/' -i src/test/resources/couchdb.properties
             sed 's/^couchdb.username.*/couchdb.username=couchdb/;s/^couchdb.password.*/couchdb.password=couchdb/' -i src/test/resources/couchdb-2.properties
             sleep 20
-            "curl -X PUT http://127.0.0.1:5984/_users -u couchdb:couchdb"
-            "curl -X PUT http://127.0.0.1:5984/_replicator -u couchdb:couchdb"
-            "curl -X PUT http://127.0.0.1:5984/_global_changes -u couchdb:couchdb"
+            curl -X PUT http://127.0.0.1:5984/_users -u couchdb:couchdb
+            curl -X PUT http://127.0.0.1:5984/_replicator -u couchdb:couchdb
+            curl -X PUT http://127.0.0.1:5984/_global_changes -u couchdb:couchdb
       # Then run your tests!
       - run:
           name: Test
