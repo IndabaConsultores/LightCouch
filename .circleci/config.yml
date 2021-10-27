@@ -87,27 +87,9 @@ jobs:
           steps:
            - maven-test
 
-  test-couchdb-320:
-    # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/openjdk
-    docker:
-      - image: cimg/openjdk:11.0
-      - image: couchdb:3.2.0
-        environment:
-          COUCHDB_USER: couchdb
-          COUCHDB_PASSWORD: couchdb
-    steps:
-      - checkout
-      - maven-build
-      - set-couchdb-credentials
-      - create-system-dbs
-      - run:
-          name: Test-and-Sonar
-          command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar -Dsonar.projectKey=es.indaba:lightcouch -Dsonar.organization=indaba -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
-
 workflows:
   build-and-test: 
     jobs:
-      #- test-couchdb-320
       - test-couchdb:
          matrix:
             parameters:
