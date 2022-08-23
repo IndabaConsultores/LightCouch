@@ -1,6 +1,8 @@
 # 0.3.1 (UNRELEASED)
 - [MAINTENANCE] Bump Gson version to 2.8.9
-- [MAINTENANCE] Test using CouchDB 3.2.2
+- [MAINTENANCE] Tested using CouchDB 3.2.2
+- [BREAK] Moved to java 8
+- [NEW] Added removeAttachment operation
 
 # 0.3.0 (29/10/2020)
 - [MAINTENANCE] Upgrade to Apache HttpClient 5.0
