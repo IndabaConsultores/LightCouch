@@ -1,4 +1,4 @@
-# 0.3.1 (UNRELEASED)
+# 0.3.1 (23/08/2022)
 - [MAINTENANCE] Bump Gson version to 2.8.9
 - [MAINTENANCE] Tested using CouchDB 3.2.2
 - [BREAK] Moved to java 8
