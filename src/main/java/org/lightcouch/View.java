@@ -22,12 +22,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.codec.Charsets;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -139,7 +139,7 @@ public class View {
 	public <T> List<T> query(Class<T> classOfT) {
 		InputStream instream = null;
 		try {  
-			Reader reader = new InputStreamReader(instream = queryForStream(), Charsets.UTF_8);
+			Reader reader = new InputStreamReader(instream = queryForStream(), StandardCharsets.UTF_8);
 			JsonArray jsonArray = JsonParser.parseReader(reader)
 					.getAsJsonObject().getAsJsonArray("rows");
 			List<T> list = new ArrayList<T>();
@@ -170,7 +170,7 @@ public class View {
 	public <K, V, T> ViewResult<K, V, T> queryView(Class<K> classOfK, Class<V> classOfV, Class<T> classOfT) {
 		InputStream instream = null;
 		try {  
-			Reader reader = new InputStreamReader(instream = queryForStream(), Charsets.UTF_8);
+			Reader reader = new InputStreamReader(instream = queryForStream(), StandardCharsets.UTF_8);
 			JsonObject json = JsonParser.parseReader(reader).getAsJsonObject(); 
 			ViewResult<K, V, T> vr = new ViewResult<K, V, T>();
 			vr.setTotalRows(getAsLong(json, "total_rows")); 
@@ -231,7 +231,7 @@ public class View {
 	private <V> V queryValue(Class<V> classOfV) {
 		InputStream instream = null;
 		try {  
-			Reader reader = new InputStreamReader(instream = queryForStream(), Charsets.UTF_8);
+			Reader reader = new InputStreamReader(instream = queryForStream(), StandardCharsets.UTF_8);
 			JsonArray array = JsonParser.parseReader(reader).
 							getAsJsonObject().get("rows").getAsJsonArray();
 			if(array.size() != 1) { 
@@ -264,7 +264,7 @@ public class View {
 		String action;
 		try {
 			// extract fields from the returned HEXed JSON object
-			final JsonObject json = JsonParser.parseString(new String(Base64.decodeBase64(param.getBytes()))).getAsJsonObject();
+			final JsonObject json = JsonParser.parseString(new String(java.util.Base64.getDecoder().decode(param.getBytes()))).getAsJsonObject();
 			if(log.isDebugEnabled()) {
 				log.debug("Paging Param Decoded = " + json);
 			}
@@ -319,7 +319,7 @@ public class View {
 					jsonNext.addProperty(START_KEY_DOC_ID, rows.get(i).getId());
 					jsonNext.add(CURRENT_KEYS, currentKeys);
 					jsonNext.addProperty(ACTION, NEXT); 
-					page.setNextParam(Base64.encodeBase64URLSafeString(jsonNext.toString().getBytes()));
+					page.setNextParam(Base64.getUrlEncoder().encodeToString(jsonNext.toString().getBytes()));
 					continue; // exclude 
 				} 
 			}
@@ -332,7 +332,7 @@ public class View {
 			jsonPrev.addProperty(START_KEY_DOC_ID, currentStartKeyDocId);
 			jsonPrev.add(CURRENT_KEYS, currentKeys);
 			jsonPrev.addProperty(ACTION, PREVIOUS); 
-			page.setPreviousParam(Base64.encodeBase64URLSafeString(jsonPrev.toString().getBytes()));
+			page.setPreviousParam(Base64.getUrlEncoder().encodeToString(jsonPrev.toString().getBytes()));
 		}
 		// calculate paging display info
 		page.setResultList(pageList);
@@ -379,7 +379,7 @@ public class View {
 					jsonNext.addProperty(START_KEY_DOC_ID, rows.get(i).getId());
 					jsonNext.add(CURRENT_KEYS, currentKeys);
 					jsonNext.addProperty(ACTION, NEXT); 
-					page.setNextParam(Base64.encodeBase64URLSafeString(jsonNext.toString().getBytes()));
+					page.setNextParam(Base64.getUrlEncoder().encodeToString(jsonNext.toString().getBytes()));
 					continue; 
 				}
 			}
@@ -392,7 +392,7 @@ public class View {
 			jsonPrev.addProperty(START_KEY_DOC_ID, currentStartKeyDocId);
 			jsonPrev.add(CURRENT_KEYS, currentKeys);
 			jsonPrev.addProperty(ACTION, PREVIOUS); 
-			page.setPreviousParam(Base64.encodeBase64URLSafeString(jsonPrev.toString().getBytes()));
+			page.setPreviousParam(Base64.getUrlEncoder().encodeToString(jsonPrev.toString().getBytes()));
 		}
 		// calculate paging display info
 		page.setResultList(pageList);

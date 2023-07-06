@@ -23,11 +23,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.codec.Charsets;
 import org.lightcouch.ReplicatorDocument.UserCtx;
 
 import com.google.gson.JsonArray;
@@ -125,7 +125,7 @@ public class Replicator {
 		InputStream instream = null;
 		try {  
 			final URI uri = buildUri(dbURI).path("_all_docs").query("include_docs", "true").build();
-			final Reader reader = new InputStreamReader(instream = dbc.get(uri), Charsets.UTF_8);
+			final Reader reader = new InputStreamReader(instream = dbc.get(uri), StandardCharsets.UTF_8);
 			final JsonArray jsonArray = JsonParser.parseReader(reader)
 					.getAsJsonObject().getAsJsonArray("rows");
 			final List<ReplicatorDocument> list = new ArrayList<ReplicatorDocument>();

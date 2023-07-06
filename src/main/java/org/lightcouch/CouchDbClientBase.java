@@ -29,11 +29,11 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.codec.Charsets;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hc.client5.http.auth.CredentialsProvider;
@@ -207,7 +207,7 @@ public abstract class CouchDbClientBase {
         try {
             String jsonToPurge = getGson().toJson(toPurge);
             response = post(buildUri(getDBUri()).path("_purge").build(), jsonToPurge);
-            reader = new InputStreamReader(getStream(response), Charsets.UTF_8);
+            reader = new InputStreamReader(getStream(response), StandardCharsets.UTF_8);
             return getGson().fromJson(reader, PurgeResponse.class);
         } finally {
             close(reader);
@@ -328,7 +328,7 @@ public abstract class CouchDbClientBase {
         ClassicHttpResponse response = null;
         try {
             response = post(buildUri(getDBUri()).path("_find").build(), jsonQuery);
-            Reader reader = new InputStreamReader(getStream(response), Charsets.UTF_8);
+            Reader reader = new InputStreamReader(getStream(response), StandardCharsets.UTF_8);
             
             JsonArray jsonArray = JsonParser.parseReader(reader).getAsJsonObject().getAsJsonArray("docs");
             List<T> list = new ArrayList<T>();
@@ -826,7 +826,7 @@ public abstract class CouchDbClientBase {
      * @return {@link Response}
      */
     private Response getResponse(ClassicHttpResponse response) throws CouchDbException {
-        InputStreamReader reader = new InputStreamReader(getStream(response), Charsets.UTF_8);
+        InputStreamReader reader = new InputStreamReader(getStream(response), StandardCharsets.UTF_8);
         return getGson().fromJson(reader, Response.class);
     }
 
@@ -836,7 +836,7 @@ public abstract class CouchDbClientBase {
      */
     private List<Response> getResponseList(ClassicHttpResponse response) throws CouchDbException {
         InputStream instream = getStream(response);
-        Reader reader = new InputStreamReader(instream, Charsets.UTF_8);
+        Reader reader = new InputStreamReader(instream, StandardCharsets.UTF_8);
         return getGson().fromJson(reader, new TypeToken<List<Response>>() {}.getType());
     }
 

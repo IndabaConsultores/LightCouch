@@ -17,9 +17,9 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.apache.commons.codec.Charsets;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
@@ -108,13 +108,13 @@ public class Changes {
             final HttpGet get = new HttpGet(uri);
             httpRequest = get;
             final InputStream in = dbc.get(get);
-            final InputStreamReader is = new InputStreamReader(in, Charsets.UTF_8);
+            final InputStreamReader is = new InputStreamReader(in, StandardCharsets.UTF_8);
             setReader(new BufferedReader(is));
         } else {
             final HttpPost post = new HttpPost(uri);
             httpRequest = post;
             final InputStream in = dbc.post(post, selector);
-            final InputStreamReader is = new InputStreamReader(in, Charsets.UTF_8);
+            final InputStreamReader is = new InputStreamReader(in, StandardCharsets.UTF_8);
             setReader(new BufferedReader(is));
         }
         return this;

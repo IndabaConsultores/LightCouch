@@ -23,9 +23,9 @@ import static org.lightcouch.URIBuilder.buildUri;
 
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import org.apache.commons.codec.Charsets;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -102,7 +102,7 @@ public class Replication {
 			}
 			final URI uri = buildUri(dbc.getBaseUri()).path("_replicate").build();
 			response = dbc.post(uri, json.toString());
-			final InputStreamReader reader = new InputStreamReader(getStream(response), Charsets.UTF_8);
+			final InputStreamReader reader = new InputStreamReader(getStream(response), StandardCharsets.UTF_8);
 			return dbc.getGson().fromJson(reader, ReplicationResult.class);
 		} finally {
 			close(response);

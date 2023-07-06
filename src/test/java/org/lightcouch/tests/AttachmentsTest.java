@@ -21,9 +21,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Base64;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 import org.lightcouch.Attachment;
 import org.lightcouch.NoDocumentException;
@@ -37,7 +37,7 @@ public class AttachmentsTest extends CouchDbTestBase {
         Attachment attachment1 = new Attachment("VGhpcyBpcyBhIGJhc2U2NCBlbmNvZGVkIHRleHQ=", "text/plain");
 
         Attachment attachment2 = new Attachment();
-        attachment2.setData(Base64.encodeBase64String("binary string".getBytes()));
+        attachment2.setData(Base64.getEncoder().encodeToString("binary string".getBytes()));
         attachment2.setContentType("text/plain");
 
         Bar bar = new Bar(); // Bar extends Document

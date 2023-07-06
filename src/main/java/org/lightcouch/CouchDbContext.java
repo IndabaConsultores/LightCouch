@@ -25,9 +25,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.apache.commons.codec.Charsets;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
@@ -114,7 +114,7 @@ public class CouchDbContext {
 		try {
 			Type typeOfList = new TypeToken<List<String>>() {}.getType();
 			instream = dbc.get(buildUri(dbc.getBaseUri()).path("_all_dbs").build());
-			Reader reader = new InputStreamReader(instream, Charsets.UTF_8);
+			Reader reader = new InputStreamReader(instream, StandardCharsets.UTF_8);
 			return dbc.getGson().fromJson(reader, typeOfList);
 		} finally {
 			close(instream);
@@ -135,7 +135,7 @@ public class CouchDbContext {
 		InputStream instream = null;
 		try {
 			instream = dbc.get(buildUri(dbc.getBaseUri()).build());
-			Reader reader = new InputStreamReader(instream, Charsets.UTF_8);
+			Reader reader = new InputStreamReader(instream, StandardCharsets.UTF_8);
 			return getAsString(JsonParser.parseReader(reader).getAsJsonObject(), "version");
 		} finally {
 			close(instream);
@@ -190,7 +190,7 @@ public class CouchDbContext {
 				builder.query("since", since);
 			}
 			instream = dbc.get(builder.build());
-			Reader reader = new InputStreamReader(instream, Charsets.UTF_8);
+			Reader reader = new InputStreamReader(instream, StandardCharsets.UTF_8);
 			return dbc.getGson().fromJson(reader, DbUpdates.class);
 		} finally {
 			close(instream);
