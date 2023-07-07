@@ -30,6 +30,7 @@ import java.util.Vector;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.CouchDbException;
 import org.lightcouch.Document;
 import org.lightcouch.DocumentConflictException;
 import org.lightcouch.NoDocumentException;
@@ -135,6 +136,19 @@ public class ViewsTest extends CouchDbTestBase {
 				.queryForString();
 		assertThat(javaTags, is("1"));
 	}
+	
+	@Test
+    public void booleanValue() {
+	    boolean couchDbHasTags = dbClient.view("example/has_tag")
+                .key("key-1")
+                .queryForBoolean();
+	    assertThat(couchDbHasTags,is(true));
+	    
+	    couchDbHasTags = dbClient.view("example/has_tag")
+                .key("key-3")
+                .queryForBoolean();
+        assertThat(couchDbHasTags,is(false));
+	}
 
 	@Test(expected = NoDocumentException.class)
 	public void viewWithNoResult_throwsNoDocumentException() {
@@ -177,6 +191,13 @@ public class ViewsTest extends CouchDbTestBase {
 		assertThat(docs.size(), not(0));
 	}
 
+	@Test(expected = CouchDbException.class)
+	public void paginationParamError() {
+	    final int rowsPerPage = 3;
+        dbClient.view("example/foo")
+                .queryPage(rowsPerPage, "a-wrong-page-param", Foo.class);
+	}
+	
 	@Test
 	public void pagination() {
 		for (int i = 0; i < 7; i++) {
