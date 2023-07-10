@@ -1,4 +1,9 @@
 # 0.3.2 (UNPUBLISHED)
+- [MAINTENANCE] Tested using CouchDB 3.3.2
+- [MAINTENANCE] Bump Apache HTTPCLient to version to 5.2.1
+- [MAINTENANCE] Remove the use of deprecated methods from HTTPClient
+- [MAINTENANCE] Remove implicit dependency on Apache Commons Codec
+- [NEW] Support for setting Connection TTL in the HTTP connection pool
 
 # 0.3.1 (23/08/2022)
 - [MAINTENANCE] Bump Gson version to 2.8.9
