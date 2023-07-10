@@ -80,6 +80,7 @@ class CouchDbConfig {
 			dbProperties.setSocketTimeout(getPropertyAsInt("couchdb.http.socket.timeout", false));
 			dbProperties.setConnectionTimeout(getPropertyAsInt("couchdb.http.connection.timeout", false));
 			dbProperties.setMaxConnections(getPropertyAsInt("couchdb.max.connections", false));
+			dbProperties.setConnectionTTL(getPropertyAsInt("couchdb.http.connection.ttl",false));
 			dbProperties.setProxyHost(getProperty("couchdb.proxy.host", false));
 			dbProperties.setProxyPort(getPropertyAsInt("couchdb.proxy.port", false));
 

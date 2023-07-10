@@ -54,8 +54,10 @@ import org.apache.hc.core5.http.config.Registry;
 import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.protocol.BasicHttpContext;
 import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.ssl.TrustStrategy;
+import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
 
 /**
@@ -150,11 +152,8 @@ public class CouchDbClient extends CouchDbClientBase implements Closeable {
             Registry<ConnectionSocketFactory> registry = createRegistry(props);
             PoolingHttpClientConnectionManager ccm = createConnectionManager(props, registry);
 
-
-
-            HttpClientBuilder clientBuilder = HttpClients.custom().setConnectionManager(ccm)
-                    .setDefaultRequestConfig(RequestConfig.custom()
-                            .setResponseTimeout(Timeout.ofMilliseconds(props.getSocketTimeout()))
+            HttpClientBuilder clientBuilder = HttpClients.custom().setConnectionManager(ccm).setDefaultRequestConfig(
+                    RequestConfig.custom().setResponseTimeout(Timeout.ofMilliseconds(props.getSocketTimeout()))
                             .setCookieSpec(StandardCookieSpec.STRICT).build());
             if (props.getProxyHost() != null) {
                 clientBuilder.setProxy(new HttpHost(props.getProxyHost(), props.getProxyPort()));
@@ -163,7 +162,7 @@ public class CouchDbClient extends CouchDbClientBase implements Closeable {
             if (credentialsProvider != null) {
                 clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
-                        
+
             registerInterceptors(clientBuilder);
             return clientBuilder.build();
         } catch (Exception e) {
@@ -199,13 +198,28 @@ public class CouchDbClient extends CouchDbClientBase implements Closeable {
 
     private PoolingHttpClientConnectionManager createConnectionManager(CouchDbProperties props,
             Registry<ConnectionSocketFactory> registry) {
-        PoolingHttpClientConnectionManager ccm = new PoolingHttpClientConnectionManager(registry);
+
+        PoolingHttpClientConnectionManager ccm;
+
+        if (props.getConnectionTTL() > 0) {
+            ccm = new PoolingHttpClientConnectionManager(registry, PoolConcurrencyPolicy.STRICT,
+                    TimeValue.ofMilliseconds(props.getConnectionTTL()), null);
+        } else {
+            ccm = new PoolingHttpClientConnectionManager(registry);
+        }
+
         if (props.getMaxConnections() != 0) {
             ccm.setMaxTotal(props.getMaxConnections());
             ccm.setDefaultMaxPerRoute(props.getMaxConnections());
         }
-        ccm.setDefaultConnectionConfig(ConnectionConfig.custom()
-                .setConnectTimeout(Timeout.ofMilliseconds(props.getConnectionTimeout())).build());
+        ConnectionConfig.Builder connectionConfigBuilder =
+                ConnectionConfig.custom().setConnectTimeout(Timeout.ofMilliseconds(props.getConnectionTimeout()));
+
+        if (props.getSocketTimeout() > 0) {
+            connectionConfigBuilder.setSocketTimeout(Timeout.ofMilliseconds(props.getSocketTimeout()));
+        }
+
+        ccm.setDefaultConnectionConfig(connectionConfigBuilder.build());
         return ccm;
     }
 
