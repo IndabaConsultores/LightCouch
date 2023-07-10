@@ -566,7 +566,7 @@ public abstract class CouchDbClientBase {
      */
     public ClassicHttpResponse executeRequest(ClassicHttpRequest request) {
         try {
-            return (ClassicHttpResponse) httpClient.execute(host, request, createContext());
+            return (ClassicHttpResponse) httpClient.executeOpen(host, request, createContext());
         } catch (IOException e) {
         	// request.abort();
             throw new CouchDbException("Error executing request. ", e);
