@@ -4,6 +4,7 @@
 - [MAINTENANCE] Remove the use of deprecated methods from HTTPClient
 - [MAINTENANCE] Remove implicit dependency on Apache Commons Codec
 - [NEW] Support for setting Connection TTL in the HTTP connection pool
+- [MAINTENANCE] Remove unmaintained guide from repo
 
 # 0.3.1 (23/08/2022)
 - [MAINTENANCE] Bump Gson version to 2.8.9
