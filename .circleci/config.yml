@@ -49,7 +49,7 @@ executors:
         default: "3.3.2"
         type: string
     docker:
-      - image: cimg/openjdk:11.0
+      - image: cimg/openjdk:17.0
       - image: couchdb:<<parameters.version>>
         environment:
           COUCHDB_USER: couchdb
@@ -80,7 +80,7 @@ jobs:
           steps:
             - run:
                name: Test-and-Sonar
-               command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar -Dsonar.projectKey=es.indaba:lightcouch -Dsonar.organization=indaba -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
+               command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar -Dsonar.projectKey=es.indaba:lightcouch -Dsonar.organization=indaba -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_TOKEN
       - unless:
           condition: 
               equal: ["3.3.2",<<parameters.version>>]
