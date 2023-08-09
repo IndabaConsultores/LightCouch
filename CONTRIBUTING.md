@@ -6,7 +6,7 @@ LightCouch is written in Java and uses [maven](https://maven.apache.org/) as its
 
 The main requirements are:
 
-* Java 1.6
+* Java 1.8
 * CouchDB
 
 ## Coding guidelines
