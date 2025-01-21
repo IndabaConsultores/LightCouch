@@ -74,19 +74,7 @@ jobs:
               equal: ["1.7.2",<<parameters.version>>]
           steps:
             - create-system-dbs
-      - when:
-          condition: 
-            equal: ["3.4.2",<<parameters.version>>]
-          steps:
-            - run:
-               name: Test-and-Sonar
-               command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar -Dsonar.projectKey=IndabaConsultores_LightCouch -Dsonar.organization=indaba -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_TOKEN
-      - unless:
-          condition: 
-              equal: ["3.4.2",<<parameters.version>>]
-          steps:
-           - maven-test
-
+      - maven-test
 workflows:
   build-and-test: 
     jobs:
