@@ -80,7 +80,7 @@ jobs:
           steps:
             - run:
                name: Test-and-Sonar
-               command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar -Dsonar.projectKey=es.indaba:lightcouch -Dsonar.organization=indaba -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_TOKEN
+               command: mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar -Dsonar.projectKey=IndabaConsultores_LightCouch -Dsonar.organization=indaba -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=$SONAR_TOKEN
       - unless:
           condition: 
               equal: ["3.4.2",<<parameters.version>>]
