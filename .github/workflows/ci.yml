@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: CouchDB ${{ matrix.couchdb }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        couchdb: ['3.5.3', '2.3.1', '1.7.2']
+    env:
+      COUCHDB_USER: couchdb
+      COUCHDB_PASSWORD: couchdb
+    services:
+      couchdb:
+        image: couchdb:${{ matrix.couchdb }}
+        env:
+          COUCHDB_USER: ${{ env.COUCHDB_USER }}
+          COUCHDB_PASSWORD: ${{ env.COUCHDB_PASSWORD }}
+        ports:
+          - 5984:5984
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Wait for CouchDB
+        run: |
+          curl --fail --silent --show-error --retry 30 --retry-connrefused \
+            --retry-delay 2 --max-time 5 --user "$COUCHDB_USER:$COUCHDB_PASSWORD" \
+            --output /dev/null http://127.0.0.1:5984/
+
+      - name: Create CouchDB system databases
+        if: matrix.couchdb != '1.7.2'
+        run: |
+          for database in _users _replicator _global_changes; do
+            curl --fail-with-body --silent --show-error --user "$COUCHDB_USER:$COUCHDB_PASSWORD" \
+              --request PUT "http://127.0.0.1:5984/$database"
+          done
+
+      - name: Configure CouchDB test credentials
+        run: |
+          sed -i \
+            -e "s/^couchdb\.username=.*/couchdb.username=$COUCHDB_USER/" \
+            -e "s/^couchdb\.password=.*/couchdb.password=$COUCHDB_PASSWORD/" \
+            src/test/resources/couchdb.properties src/test/resources/couchdb-2.properties
+
+      - name: Build and test
+        run: mvn --batch-mode clean package
