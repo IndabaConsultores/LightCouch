@@ -1,7 +1,7 @@
 CouchDB Java API
 ================
 
-[![IndabaConsultores](https://circleci.com/gh/IndabaConsultores/LightCouch.svg?style=svg)](https://app.circleci.com/pipelines/github/IndabaConsultores/LightCouch)
+[![CI](https://github.com/IndabaConsultores/LightCouch/actions/workflows/ci.yml/badge.svg)](https://github.com/IndabaConsultores/LightCouch/actions/workflows/ci.yml)
 [![Sonarcloud](https://sonarcloud.io/api/project_badges/measure?project=es.indaba:lightcouch&metric=alert_status)](https://sonarcloud.io/dashboard?id=es.indaba:lightcouch)
 [![](https://jitpack.io/v/IndabaConsultores/LightCouch.svg)](https://jitpack.io/#IndabaConsultores/LightCouch)
 
