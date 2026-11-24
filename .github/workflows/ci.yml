@@ -4,6 +4,7 @@ on:
   push:
     branches: ['**']
   pull_request:
+  workflow_call:
 
 permissions:
   contents: read
@@ -62,3 +63,12 @@ jobs:
 
       - name: Build and test
         run: mvn --batch-mode clean package
+
+      - name: Upload tested release JAR
+        if: github.ref_type == 'tag' && strategy.job-index == 0
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-jar
+          path: target/lightcouch-${{ github.ref_name }}.jar
+          if-no-files-found: error
+          overwrite: true

@@ -25,3 +25,18 @@ with the following changes:
     Indent continuation of +4 characters fine, but I think
     IDEA defaults to 8, which is okay too.
 ```
+
+## Releasing
+
+Remove `-SNAPSHOT` from the release version in `pom.xml`, then commit and push
+the change. Tag that commit with the matching `MAJOR.MINOR.PATCH` version. For
+version `0.3.3`, run the following commands from the release commit.
+
+```sh
+git tag 0.3.3
+git push origin 0.3.3
+```
+
+The Release workflow runs the full CouchDB test matrix, then publishes a GitHub
+release with generated notes and the tested JAR. The tag is also the version
+consumers use with JitPack.
