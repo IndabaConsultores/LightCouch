@@ -2,7 +2,7 @@ CouchDB Java API
 ================
 
 [![CI](https://github.com/IndabaConsultores/LightCouch/actions/workflows/ci.yml/badge.svg)](https://github.com/IndabaConsultores/LightCouch/actions/workflows/ci.yml)
-[![Sonarcloud](https://sonarcloud.io/api/project_badges/measure?project=es.indaba:lightcouch&metric=alert_status)](https://sonarcloud.io/dashboard?id=es.indaba:lightcouch)
+[![Sonarcloud](https://sonarcloud.io/api/project_badges/measure?project=IndabaConsultores_LightCouch&metric=alert_status)](https://sonarcloud.io/dashboard?id=IndabaConsultores_LightCouch)
 [![](https://jitpack.io/v/IndabaConsultores/LightCouch.svg)](https://jitpack.io/#IndabaConsultores/LightCouch)
 
 
