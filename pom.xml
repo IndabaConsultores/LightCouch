@@ -43,9 +43,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<httpclient.version>5.6.3</httpclient.version>
-		<commons-login.version>1.2</commons-login.version>
-		<gson.version>2.8.9</gson.version>
+		<httpclient.version>5.6.5</httpclient.version>
+		<commons-login.version>1.4.0</commons-login.version>
+		<gson.version>2.15.0</gson.version>
 		<junit.version>4.13.1</junit.version>
 	</properties>
 	<dependencies>
@@ -87,7 +87,7 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>2.13.1</version>
+			<version>2.26.1</version>
 			<scope>test</scope>
 		</dependency>
 
