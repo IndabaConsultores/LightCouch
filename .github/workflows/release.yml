@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags: ['[0-9]+.[0-9]+.[0-9]+']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+
+jobs:
+  test:
+    if: github.event.deleted == false
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    name: Publish GitHub release
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download tested release JAR
+        uses: actions/download-artifact@v8
+        with:
+          name: release-jar
+          path: dist
+
+      - name: Publish release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          tag="$GITHUB_REF_NAME"
+          jar="lightcouch-${tag}.jar"
+
+          if is_draft=$(gh release view "$tag" --json isDraft --jq '.isDraft'); then
+            if [[ "$is_draft" == 'false' ]]; then
+              gh release view "$tag" --json assets --jq '.assets[].name' | grep -Fx -- "$jar"
+              exit 0
+            fi
+          else
+            gh release create "$tag" --verify-tag --draft --generate-notes
+          fi
+
+          gh release upload "$tag" "dist/$jar" --clobber
+          gh release edit "$tag" --draft=false
